@@ -6,15 +6,20 @@ Este projeto tem como objetivo exportar dados de um banco de dados PostgreSQL pa
 
 ```
 📂 projeto
-│── .env                 # Configurações de ambiente
-│── main.py              # Arquivo principal para execução do exportador
-├── config
-│   ├── config.py        # Configurações gerais do projeto
-│   ├── s3_config.py     # Configuração de conexão com o S3
-├── database
-│   ├── db_config.py     # Configuração da conexão com o PostgreSQL
-│   ├── queries.py       # Armazena as queries SQL para exportação
-├── export.py            # Script de exportação
+│── 📄 .env                        # Configurações de ambiente
+│── 📄 main.py                     # Arquivo principal para execução do exportador
+│── 📂 config                      # Configurações gerais do projeto
+│   ├── 📄 config.py               # Configurações gerais
+│   ├── 📄 s3_config.py            # Configuração de conexão com o S3
+│── 📂 database                    # Configuração do banco de dados
+│   ├── 📄 db_config.py            # Conexão com o PostgreSQL
+│   ├── 📄 queries.py              # Armazena as queries SQL para exportação
+│── 📂 export                      # Scripts de exportação
+│   ├── 📄 parquet.py              # Exporta dados para formato Parquet e envia para o S3
+│   ├── 📄 getParquet.py           # Recupera arquivos Parquet do S3
+│── 📂 venv                        # Ambiente virtual (não incluir no repositório)
+│── 📄 .gitignore                  # Arquivo para ignorar arquivos no Git
+│── 📄 readme.md                   # Documentação do projeto
 ```
 
 ## 🛠️ Tecnologias Utilizadas
