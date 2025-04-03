@@ -1,11 +1,11 @@
 import sys
 import os
 import yagmail
+from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from dotenv import load_dotenv
 from config.s3_config import connect_minio
 from config.config import AWS_BUCKET
-
 
 # Carregar variáveis do .env
 load_dotenv()
@@ -16,7 +16,6 @@ EXPIRATION_TIME = 86400  # 24 horas
 # Configurações do Gmail
 GMAIL_USER = os.getenv("GMAIL_USER")
 GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")  # App Password
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
 
 def get_parquet_files():
     """Gera URLs temporárias para os arquivos Parquet armazenados no S3."""
@@ -67,13 +66,19 @@ def send_email_with_parquet_links():
     email_body = "📂 Aqui estão os links para download dos arquivos Parquet no S3 (válidos por 24h):\n\n"
     email_body += "\n".join([f"{file}: {url}" for file, url in urls.items()])
 
+    # Formatar data e hora para o subject
+    data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+    subject = f"Links de Download - Parquet no S3 ({data_hora})"
+
     try:
         yag = yagmail.SMTP(GMAIL_USER, GMAIL_PASSWORD)
-        yag.send(to=RECIPIENT_EMAIL, subject="Links de Download - Parquet no S3", contents=email_body)
-        print(f"📩 E-mail enviado para {RECIPIENT_EMAIL} com sucesso!")
+        
+        # Enviar para todos os e-mails diretamente no "to"
+        yag.send(to=['daniel@educacao.am.gov.br','eduardo.barbosa@educacao.am.gov.br','mirian@educacao.am.gov.br'], subject=subject, contents=email_body)
+
+        print(f"📩 E-mail enviado para {', '.join(['daniel@educacao.am.gov.br','eduardo.barbosa@educacao.am.gov.br','mirian@educacao.am.gov.br'])} com sucesso!")
     except Exception as e:
         print(f"❌ Erro ao enviar e-mail: {e}")
 
 if __name__ == "__main__":
     send_email_with_parquet_links()
-
