@@ -4,7 +4,7 @@ from io import BytesIO
 from database.db_config import connect_postgresql
 from config.s3_config import connect_minio
 from database.queries import QUERIES  # Importa o dicionário completo
-from config.config import AWS_BUCKET
+from config.settings import AWS_BUCKET
 
 def export_to_s3_as_parquet():
     try:

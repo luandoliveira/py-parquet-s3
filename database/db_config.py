@@ -1,5 +1,10 @@
 import psycopg2
-from config.config import DB_CONFIG
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from config.settings import DB_CONFIG
 
 def connect_postgresql():
     try:
@@ -9,3 +14,6 @@ def connect_postgresql():
     except Exception as e:
         print(f"❌ Erro ao conectar ao PostgreSQL: {e}")
         return None
+
+if __name__ == "__main__":
+    connect_postgresql()

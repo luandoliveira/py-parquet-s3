@@ -5,20 +5,18 @@ from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from dotenv import load_dotenv
 from config.s3_config import connect_minio
-from config.config import AWS_BUCKET
+from config.settings import AWS_BUCKET  # Adicionando a variável para URL base
 
 # Carregar variáveis do .env
 load_dotenv()
 
-# Tempo de expiração da URL (24h)
-EXPIRATION_TIME = 86400  # 24 horas
-
+AWS_S3_URL = "https://storage.seduc.am.gov.br:9000"  # URL base do S3
 # Configurações do Gmail
 GMAIL_USER = os.getenv("GMAIL_USER")
 GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")  # App Password
 
 def get_parquet_files():
-    """Gera URLs temporárias para os arquivos Parquet armazenados no S3."""
+    """Gera URLs diretas para os arquivos Parquet armazenados no S3."""
     try:
         s3_client = connect_minio()
         if s3_client is None:
@@ -39,13 +37,9 @@ def get_parquet_files():
             print("⚠️ Nenhum arquivo .parquet encontrado.")
             return {}
 
-        # Gera URLs temporárias
+        # Gera URLs diretas (sem expiração)
         urls = {
-            file: s3_client.generate_presigned_url(
-                "get_object",
-                Params={"Bucket": AWS_BUCKET, "Key": file},
-                ExpiresIn=EXPIRATION_TIME
-            ) for file in parquet_files
+            file: f"{AWS_S3_URL}/{AWS_BUCKET}/{file}" for file in parquet_files
         }
 
         return urls
@@ -63,7 +57,7 @@ def send_email_with_parquet_links():
         return
 
     # Monta o corpo do e-mail
-    email_body = "📂 Aqui estão os links para download dos arquivos Parquet no S3 (válidos por 24h):\n\n"
+    email_body = "📂 Aqui estão os links para download dos arquivos Parquet no S3:\n\n"
     email_body += "\n".join([f"{file}: {url}" for file, url in urls.items()])
 
     # Formatar data e hora para o subject
